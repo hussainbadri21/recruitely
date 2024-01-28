@@ -10,7 +10,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@planetscale/database": "^1.14.0",
+    "@ant-design/nextjs-registry": "^1.0.0",
     "@prisma/client": "^5.8.1",
     "antd": "^5.13.3",
     "next": "14.1.0",

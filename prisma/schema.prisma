@@ -14,9 +14,10 @@ model Candidate {
     candidate_name     String @db.VarChar(100)
     email              String @db.VarChar(255)
     phone              String @db.VarChar(20)
-    skills             Json[]
+    skills             Json
     current_status     Int
     expected_salary    Float 
-    s                  Int
+    score              Int
+    active             Int
     created_at         DateTime @default (now())
 }
