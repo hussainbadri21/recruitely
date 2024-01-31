@@ -1,9 +1,6 @@
 import prisma from '../../../../../lib/prisma';
 import { getScore, validateForm, statusList } from '@/app/helpers'
 
-export async function GET() { }
-
-
 export async function PUT(req: Request) {
     try {
         const data = await req.json();
