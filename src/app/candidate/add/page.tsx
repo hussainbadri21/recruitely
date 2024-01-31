@@ -1,16 +1,21 @@
 "use client"
 import Form from '@/app/components/Form'
 import { message } from 'antd';
+import { useState } from 'react';
+
 
 const App: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
+    const [loading, setLoading] = useState(false)
+
     const onSubmit = (values: any) => {
+        setLoading(true);
         fetch('/candidate/add/submit', { method: "POST", body: JSON.stringify(values) })
             .then(async res => {
+                setLoading(false);
                 const body = await res.json()
                 switch (res.status) {
                     case 200:
-
                         messageApi.open({
                             type: 'success',
                             content: body.message,
@@ -26,7 +31,8 @@ const App: React.FC = () => {
                 }
             })
             .catch((e) => {
-                console.log(e)
+                console.log(e);
+                setLoading(false);
                 messageApi.open({
                     type: 'error',
                     content: 'Something went wrong',
@@ -36,7 +42,7 @@ const App: React.FC = () => {
     return (
         <>
             {contextHolder}
-            <Form onSubmit={onSubmit} />
+            <Form onSubmit={onSubmit} loading={loading} />
         </>
     )
 };

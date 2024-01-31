@@ -3,7 +3,7 @@ import { useEffect, FC, useState } from 'react';
 import { getScore, CandidateData, statusList } from '@/app/helpers'
 
 
-const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => void }> = ({ formData, onSubmit }) => {
+const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => void, loading: boolean }> = ({ formData, onSubmit, loading }) => {
     const { Option } = Select;
     const validateMessages = {
         required: 'Please enter ${label}!',
@@ -41,6 +41,7 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
     const [form] = Form.useForm()
 
     const [score, setScore] = useState(0)
+
 
     useEffect(() => {
         form.setFieldsValue(formData)
@@ -97,10 +98,10 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
                     {statusList.map((status: string, index: number) => <Option key={index} value={index}>{status}</Option>)}
                 </Select>
             </Form.Item>
-            <div className='ml-24'>{`Score : ${score} / 6`}</div>
+            <div className='ml-4 mb-8 sm:ml-24'>{`Score : ${score} / 6`}</div>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit">
+                <Button loading={loading} type="primary" htmlType="submit">
                     Submit
                 </Button>
             </Form.Item>

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation'
 import Form from '@/app/components/Form'
-import { message } from 'antd';
+import { message, Skeleton } from 'antd';
 import { statusList } from '@/app/helpers';
 
 
@@ -13,6 +13,7 @@ const App: React.FC = () => {
     const router = useParams()
     const { id } = router
     const [data, setData] = useState();
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         fetch(`/candidate/edit/fetch?id=${id}`)
@@ -27,9 +28,11 @@ const App: React.FC = () => {
     }, []);
 
     const onSubmit = (values: any) => {
+        setLoading(true);
         values.id = id
         fetch('/candidate/edit/submit', { method: "PUT", body: JSON.stringify(values) })
             .then(async res => {
+                setLoading(false);
                 const body = await res.json()
                 switch (res.status) {
                     case 200:
@@ -48,7 +51,8 @@ const App: React.FC = () => {
                 }
             })
             .catch((e) => {
-                console.log(e)
+                console.log(e);
+                setLoading(false);
                 messageApi.open({
                     type: 'error',
                     content: 'Something went wrong',
@@ -57,7 +61,9 @@ const App: React.FC = () => {
     };
 
     return (
-        <Form formData={data} onSubmit={onSubmit} />
+        <Skeleton active loading={!data}>
+            <Form formData={data} onSubmit={onSubmit} loading={loading} />
+        </Skeleton>
     )
 };
 

@@ -33,7 +33,7 @@ const ListCard = ({ item, onCurrentStatusChange, idToShowLoader, onCandidateDele
                     title={item.candidate_name}
                     description={
                         <div className='flex flex-col gap-2'>
-                            <a href={`mailto:${item.email}`}>{item.email}</a>
+                            <a className='text-ellipsis	overflow-hidden whitespace-nowrap' href={`mailto:${item.email}`}>{item.email}</a>
                             <a href={`tel:${item.phone}`}>{item.phone}</a>
                         </div>}
                 />

@@ -1,5 +1,5 @@
 import prisma from '../../../../../lib/prisma';
-import { getScore, validateForm } from '@/app/helpers'
+import { getScore, validateForm, statusList } from '@/app/helpers'
 
 export async function GET() { }
 
@@ -9,7 +9,7 @@ export async function PUT(req: Request) {
         const data = await req.json();
         const id = Number(data.id)
         data.expected_salary = parseFloat(data.expected_salary)
-        data.current_status = parseInt(data.current_status)
+        data.current_status = statusList.indexOf(data.current_status)
         data.phone = `${data.prefix} ${data.phone}`
         data.active = 1
 
