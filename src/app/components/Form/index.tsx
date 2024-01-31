@@ -1,6 +1,6 @@
 import { Button, Select, Form, Input, Slider } from 'antd';
 import { useEffect, FC, useState } from 'react';
-import { getScore, CandidateData } from '@/app/helpers'
+import { getScore, CandidateData, statusList } from '@/app/helpers'
 
 
 const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => void }> = ({ formData, onSubmit }) => {
@@ -32,7 +32,7 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
 
     const prefixSelector = (
         <Form.Item name="prefix" noStyle>
-            <Select style={{ width: 70 }}>
+            <Select className='w-[70px]' defaultValue='+91'>
                 <Option value="+91">+91</Option>
                 <Option value="+1">+1</Option>
             </Select>
@@ -53,7 +53,7 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
             name="basic"
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
+            className='max-w-[600px]'
             initialValues={formData}
             onFinish={onSubmit}
             onFinishFailed={onFinishFailed}
@@ -79,7 +79,7 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
                 label="Phone Number"
                 rules={[{ required: true, min: 8, max: 15 }]}
             >
-                <Input type='number' addonBefore={prefixSelector} style={{ width: '100%' }} />
+                <Input type='number' addonBefore={prefixSelector} className='w-full' />
             </Form.Item>
             <Form.Item name={['skills', 'react']}
                 label="Experience in React">
@@ -94,11 +94,7 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
             </Form.Item>
             <Form.Item name="current_status" label="Current Status" rules={[{ required: true }]}>
                 <Select placeholder="Select current status">
-                    <Option value="0">Contacted</Option>
-                    <Option value="1">Interview Scheduled</Option>
-                    <Option value="2">Offer Extended</Option>
-                    <Option value="3">Hired</Option>
-                    <Option value="4">Rejected</Option>
+                    {statusList.map((status: string, index: number) => <Option key={index} value={index}>{status}</Option>)}
                 </Select>
             </Form.Item>
             <div className='ml-24'>{`Score : ${score} / 6`}</div>

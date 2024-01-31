@@ -9,10 +9,13 @@ export interface CandidateData {
     };
     expected_salary: number;
     current_status: number;
+    score: number;
 }
 
 
 const getScore = (experience: number) => {
+    if (experience === 0)
+        return 0
     if (experience < 1) {
         return 1
     }
@@ -47,21 +50,6 @@ const validateForm = (data: CandidateData) => {
     return true
 }
 
-const getCurrentStatus = (status: number) => {
-    switch (status) {
-        case 0:
-            return "Contacted"
-        case 1:
-            return "Interview Scheduled"
-        case 2:
-            return "Offer Extended"
-        case 3:
-            return "Hired"
-        case 4:
-            return "Rejected"
-        default:
-            return "Contacted"
-    }
-}
+const statusList = ["Contacted", "Interview Scheduled", "Offer Extended", "Hired", "Rejected"]
 
-export { getScore, validateForm, getCurrentStatus }
+export { getScore, validateForm, statusList }

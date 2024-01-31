@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation'
 import Form from '@/app/components/Form'
 import { message } from 'antd';
+import { statusList } from '@/app/helpers';
+
 
 
 const App: React.FC = () => {
@@ -19,19 +21,18 @@ const App: React.FC = () => {
                 const { phone } = body.candidate
                 body.candidate.phone = phone.split(' ')[1];
                 body.candidate.prefix = phone.split(' ')[0];
-                body.candidate.current_status = body.candidate.current_status.toString()
+                body.candidate.current_status = statusList[Number(body.candidate.current_status)]
                 setData(body.candidate);
             })
     }, []);
 
     const onSubmit = (values: any) => {
         values.id = id
-        fetch('/candidate/edit/submit', { method: "POST", body: JSON.stringify(values) })
+        fetch('/candidate/edit/submit', { method: "PUT", body: JSON.stringify(values) })
             .then(async res => {
                 const body = await res.json()
                 switch (res.status) {
                     case 200:
-
                         messageApi.open({
                             type: 'success',
                             content: body.message,
@@ -54,8 +55,6 @@ const App: React.FC = () => {
                 });
             });
     };
-
-
 
     return (
         <Form formData={data} onSubmit={onSubmit} />

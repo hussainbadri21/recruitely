@@ -4,13 +4,13 @@ import { getScore, validateForm } from '@/app/helpers'
 export async function GET() { }
 
 
-export async function POST(req: Request) {
+export async function PUT(req: Request) {
     try {
         const data = await req.json();
         const id = Number(data.id)
         data.expected_salary = parseFloat(data.expected_salary)
         data.current_status = parseInt(data.current_status)
-        data.phone = `+${data.prefix} ${data.phone}`
+        data.phone = `${data.prefix} ${data.phone}`
         data.active = 1
 
         delete data.prefix
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             });
 
             if (results)
-                return Response.json({ message: 'Candidate details updated successfully' }, { status: 200 })
+                return Response.json({ message: 'Candidate details updated successfully', updated_data: results }, { status: 200 })
         }
     } catch (e) {
         console.log(e)

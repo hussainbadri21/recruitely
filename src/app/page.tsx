@@ -1,13 +1,14 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Badge, Button, message, Popconfirm, List, Skeleton } from 'antd';
-import Link from 'next/link'
-import { getCurrentStatus, CandidateData } from '@/app/helpers';
+import { message, List, Skeleton } from 'antd';
+import ListCard from "@/app/components/ListCard";
+import { CandidateData } from '@/app/helpers';
+
 
 const App: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<CandidateData[]>([]);
+    const [idToShowLoader, setIdToShowLoader] = useState(-1)
 
     const loadMoreData = () => {
         if (loading) {
@@ -29,10 +30,53 @@ const App: React.FC = () => {
         loadMoreData();
     }, []);
 
-    const badgeColors = ['gold', 'orange', 'lime', 'green', 'red']
     const [messageApi, contextHolder] = message.useMessage();
 
-    const confirm = (id: number) => {
+
+    const onCurrentStatusChange = (e: { key: string }, id: number) => {
+        setIdToShowLoader(id)
+        fetch('/candidate/edit/status', {
+            method: 'PUT',
+            body: JSON.stringify({
+                id,
+                current_status: e.key,
+            }),
+        }).then(async res => {
+            const body = await res.json()
+            switch (res.status) {
+                case 200:
+                    messageApi.open({
+                        type: 'success',
+                        content: body.message,
+                    });
+                    const objIndex = data.findIndex(obj => obj.candidate_id === id);
+                    const updatedState = [
+                        ...data.slice(0, objIndex),
+                        body.updated_data,
+                        ...data.slice(objIndex + 1),
+                    ];
+                    setData(updatedState);
+                    break;
+                case 400:
+                    messageApi.open({
+                        type: 'error',
+                        content: body.message,
+                    });
+                    break;
+            }
+            setIdToShowLoader(-1)
+        })
+            .catch((e) => {
+                console.log(e)
+                messageApi.open({
+                    type: 'error',
+                    content: 'Something went wrong',
+                });
+                setIdToShowLoader(-1)
+            });
+    };
+
+    const onCandidateDeleteConfirm = (id: number) => {
         fetch(`/candidate/delete`, {
             method: 'DELETE',
             body: JSON.stringify({
@@ -42,12 +86,16 @@ const App: React.FC = () => {
             const body = await res.json()
             switch (res.status) {
                 case 200:
-
                     messageApi.open({
                         type: 'success',
                         content: body.message,
                     });
-                    window.location.href = '/'
+                    const objIndex = data.findIndex(obj => obj.candidate_id === id);
+                    const updatedState = [
+                        ...data.slice(0, objIndex),
+                        ...data.slice(objIndex + 1),
+                    ];
+                    setData(updatedState);
                     break;
                 case 400:
                     messageApi.open({
@@ -66,43 +114,21 @@ const App: React.FC = () => {
             });
     };
 
-
     return (
         <div
             id="scrollableDiv"
             className="overflow-auto px-4 p-0 border border-solid border-gray-400 border-opacity-35"
         >
             {contextHolder}
-            <List
-                dataSource={data}
-                renderItem={(item) => (
-                    <Badge.Ribbon text={getCurrentStatus(item.current_status)} color={badgeColors[item.current_status]}>
-                        <List.Item
-                            actions={[
-                                <Link href={`/candidate/edit/${item.candidate_id}`}>Edit</Link>,
-                                <Popconfirm
-                                    title={`Delete ${item.candidate_name}'s Data`}
-                                    description={`Are you sure you want to delete ${item.candidate_name}'s data?`}
-                                    onConfirm={e => confirm(item.candidate_id)}
-                                    okText="Yes"
-                                >
-                                    <Button type="text" danger>Delete</Button>
-                                </Popconfirm>]}
-                        >
-                            <List.Item.Meta
-                                title={item.candidate_name}
-                                description={
-                                    <div className='flex flex-col gap-2'>
-                                        <a href={`mailto:${item.email}`}>{item.email}</a>
-                                        <a href={`tel:${item.phone}`}>{item.phone}</a>
-                                    </div>}
-                            />
+            <Skeleton active loading={loading} >
+                <List
+                    pagination={{ position: 'bottom', align: 'center', pageSize: 10 }}
+                    dataSource={data}
+                    renderItem={(item) => <ListCard item={item} onCurrentStatusChange={onCurrentStatusChange} idToShowLoader={idToShowLoader} onCandidateDeleteConfirm={onCandidateDeleteConfirm} />}
+                />
+            </Skeleton>
 
-                        </List.Item>
-                    </Badge.Ribbon>
-                )}
-            />
-        </div>
+        </div >
     );
 };
 
