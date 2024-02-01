@@ -32,7 +32,7 @@ const CandidateForm: FC<{ formData?: CandidateData, onSubmit: (values: any) => v
 
     const prefixSelector = (
         <Form.Item name="prefix" noStyle>
-            <Select className='w-[70px]' defaultValue='+91'>
+            <Select className='w-[70px]'>
                 <Option value="+91">+91</Option>
                 <Option value="+1">+1</Option>
             </Select>
